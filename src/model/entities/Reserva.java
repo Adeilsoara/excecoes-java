@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+
+import model.excecoes.DominioExcecoes;
+
 public class Reserva {
 	
 	private Integer numeroQuarto;
@@ -13,6 +16,9 @@ public class Reserva {
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyy");
 	
 	public Reserva(Integer numeroQuarto, Date dataEntrada, Date dataSaida) {
+		if(!dataSaida.after(dataEntrada)) {
+			throw new DominioExcecoes("Erro na reserva!");
+		}
 		this.numeroQuarto = numeroQuarto;
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
@@ -39,20 +45,18 @@ public class Reserva {
 		return TimeUnit.DAYS.convert(diferenca, TimeUnit.MILLISECONDS);
 	}
 	
-	public String atualizarDatas(Date dataEntrada, Date dataSaida) {
+	public void atualizarDatas(Date dataEntrada, Date dataSaida) {
 		Date agora = new Date();
 		if (dataEntrada.before(agora) || dataSaida.before(agora)) {
-			return "Erro na Reserva: As datas precisam ser futuras. ";
-		
+			throw new DominioExcecoes("Erro na Reserva: As datas precisam ser futuras. ");
 		}
 		if(!dataSaida.after(dataEntrada)) {
-			return "Erro na reserva!";
+			throw new DominioExcecoes("Erro na reserva!");
 		}
 		
 		this.dataEntrada = dataEntrada;
 		this.dataSaida = dataSaida;
-		
-		return null;
+
 	}
 	
 	public String toString() {
